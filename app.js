@@ -37,9 +37,8 @@
     var bathrooms = getBathValue();
     var balcony = getBalconyValue();
     var estPrice = document.getElementById("uiEstimatedPrice");
-    var price_url = '/predict'
   
-    $.post(price_url, {
+    $.post(url_for('predict_house_price'), {
         area_type:area_type.value,
         location:location.value,
         bhk:bhk,
@@ -55,8 +54,7 @@
   
   function onPageLoad() {
     console.log( "document loaded" );
-    var location_url = "/get_locations";
-    $.get(location_url,function(data, status) {
+    $.get(url_for('get_locations'),function(data, status) {
         console.log("got response for get_location_names request");
         if(data) {
             var locations = data.locations;
@@ -69,8 +67,7 @@
         }
     });
 
-    var area_url = "/get_area_types";
-    $.get(area_url,function(data, status) {
+    $.get(url_for('get_area_types'),function(data, status) {
         console.log("got response for get_area_types request");
         if(data) {
             var area_types = data.area_types;
