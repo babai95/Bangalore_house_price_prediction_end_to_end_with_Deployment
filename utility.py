@@ -19,12 +19,12 @@ def load_saved_artifacts():
     global model
     global area_types
 
-    with open("./columns.json", "r") as f:
+    with open("columns.json", "r") as f:
         columns = json.load(f)["data_columns"]
         area_types = columns[4:8]
         locations = columns[8:-1]
 
-    with open("./banglore_home_prices_model.pickle", "rb") as f:
+    with open("banglore_home_prices_model.pickle", "rb") as f:
         model = pickle.load(f)
 
 def predict_price(area_type, location, bhk ,total_sqft, bath, balcony):
