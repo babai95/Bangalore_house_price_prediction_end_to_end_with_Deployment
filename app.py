@@ -1,7 +1,11 @@
 #This function will just do routing of request and response
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 import utility
 app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return render_template('app.html')
 
 @app.route('/get_locations')
 def get_locations():
@@ -20,8 +24,8 @@ def get_area_types():
     })
 
     response.headers.add('Access-Control-Allow-Origin', '*')
-
     return response
+
 @app.route('/predict_house_price', methods=['POST'])
 def predict_house_price():
     area_type = request.form['area_type']
