@@ -37,7 +37,7 @@
     var bathrooms = getBathValue();
     var balcony = getBalconyValue();
     var estPrice = document.getElementById("uiEstimatedPrice");
-    var price_url = "http://127.0.0.1:5000/predict_house_price";
+    var price_url = '/predict'
   
     $.post(price_url, {
         area_type:area_type.value,
@@ -55,7 +55,7 @@
   
   function onPageLoad() {
     console.log( "document loaded" );
-    var location_url = "http://127.0.0.1:5000/get_locations";
+    var location_url = "/get_locations";
     $.get(location_url,function(data, status) {
         console.log("got response for get_location_names request");
         if(data) {
@@ -69,7 +69,7 @@
         }
     });
 
-    var area_url = "http://127.0.0.1:5000/get_area_types";
+    var area_url = "/get_area_types";
     $.get(area_url,function(data, status) {
         console.log("got response for get_area_types request");
         if(data) {
