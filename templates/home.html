@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Banglore House Price Prediction</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/style.css') }}">
+</head>
+<body>
+<div class="img"></div>
+<!-- http://127.0.0.1:5000/predict_house_price  {{ url_for('predict_house_price') }} -->
+<form action="http://127.0.0.1:5000/predict_house_price" method="POST">
+	<input class="text_input" type="text" name="area_type" placeholder="Area type"><br>
+	<input class="text_input" type="text" name="location" placeholder="Location"><br>
+	<input class="text_input" type="text" name="bhk" placeholder="BHK"><br>
+	<input class="text_input" type="text" name="total_sqft" placeholder="Total sqft"><br>
+	<input class="text_input" type="text" name="bath" placeholder="Bath"><br>
+	<input class="text_input" type="text" name="balcony" placeholder="Balcony"><br>
+	<input type="submit" class="submit" value="Estimate">   
+	<h1>Estimated house price value = {{prediction}}</h1>
+</form>	
+
+</body>
+</html>
