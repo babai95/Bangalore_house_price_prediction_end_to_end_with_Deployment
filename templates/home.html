@@ -7,8 +7,7 @@
 </head>
 <body>
 <div class="img"></div>
-<!-- http://127.0.0.1:5000/predict_house_price  {{ url_for('predict_house_price') }} -->
-<form action="{{ url_for('predict_house_price') }}" method="POST">
+<form action="{{ url_for('predict') }}" method="POST">
 	<input class="text_input" type="text" name="area_type" placeholder="Area type"><br>
 	<input class="text_input" type="text" name="location" placeholder="Location"><br>
 	<input class="text_input" type="text" name="bhk" placeholder="BHK"><br>
