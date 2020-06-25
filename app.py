@@ -1,33 +1,25 @@
 #This function will just do routing of request and response
 from flask import Flask, request, jsonify, render_template
-import utility
+import json
+import pickle
+import numpy as np
 app = Flask(__name__)
+columns = None
+model = None
+with open("columns.json", "r") as f:
+    columns = json.load(f)["data_columns"]
+    #area_types = columns[4:8]
+    #locations = columns[8:-1]
+
+with open("banglore_home_prices_model.pickle", "rb") as f:
+    model = pickle.load(f)
 
 @app.route('/')
 def home():
-    return render_template('app.html')
+    return render_template('home.html')
 
-@app.route('/get_locations')
-def get_locations():
-    response = jsonify({
-        'locations' : utility.get_location_names()
-    })
-
-    response.headers.add('Access-Control-Allow-Origin', '*')
-
-    return response
-
-@app.route('/get_area_types')
-def get_area_types():
-    response = jsonify({
-        'area_types' : utility.get_area_types()
-    })
-
-    response.headers.add('Access-Control-Allow-Origin', '*')
-    return response
-
-@app.route('/predict_house_price', methods=['POST'])
-def predict_house_price():
+@app.route('/predict', methods=['POST'])
+def predict():
     area_type = request.form['area_type']
     location = request.form['location']
     bhk = int(request.form['bhk'])
@@ -35,15 +27,30 @@ def predict_house_price():
     bath = int(request.form['bath'])
     balcony = int(request.form['balcony'])
 
-    response = jsonify({
-        'estimated_house_price': utility.predict_price(area_type,location,bhk,total_sqft,bath,balcony)
-    })
+    tokens = area_type.split(" ")
+    if(len(tokens) == 2):
+        area_type = tokens[0] + "  " + tokens[1]
+    else:
+        area_type = tokens[0] + " " + tokens[1] + "  " + tokens[2]
+    area_type_ind = columns.index(area_type.lower())
+    
+    location_ind = columns.index(location.lower())
 
-    response.headers.add('Access-Control-Allow-Origin', '*')
-    return response
+    data = np.zeros(len(columns))
+    data[0] = bhk
+    data[1] = total_sqft
+    data[2] = bath
+    data[3] = balcony
+    data[area_type_ind] = 1
+    data[location_ind] = 1
+
+    output = np.round(model.predict([data])[0],2)
+   
+
+    #response.headers.add('Access-Control-Allow-Origin', '*')
+    return render_template('home.html', prediction = output)
 
 if __name__ == '__main__':
     print("Starting flask server")
-    utility.load_saved_artifacts()
-    app.run()
+    app.run(debug=True)
 
