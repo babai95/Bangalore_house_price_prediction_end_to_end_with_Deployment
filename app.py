@@ -8,15 +8,21 @@ columns = None
 model = None
 with open("columns.json", "r") as f:
     columns = json.load(f)["data_columns"]
-    #area_types = columns[4:8]
-    #locations = columns[8:-1]
-
+    
 with open("banglore_home_prices_model.pickle", "rb") as f:
     model = pickle.load(f)
 
 @app.route('/')
 def home():
     return render_template('home.html')
+
+@app.route('/location')
+def location():
+    return jsonify(columns[8:-1])
+
+@app.route('/area')
+def area():
+    return jsonify(columns[4:8])
 
 @app.route('/predict', methods=['POST'])
 def predict():
@@ -45,11 +51,8 @@ def predict():
     data[location_ind] = 1
 
     output = np.round(model.predict([data])[0],2)
-   
-
-    #response.headers.add('Access-Control-Allow-Origin', '*')
-    return render_template('home.html', prediction = output)
-
+    return jsonify(output)
+    
 if __name__ == '__main__':
     print("Starting flask server")
     app.run(debug=True)

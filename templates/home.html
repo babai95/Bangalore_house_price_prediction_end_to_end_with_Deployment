@@ -2,20 +2,161 @@
 <html>
 <head>
     <title>Banglore House Price Prediction</title>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 	<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/style.css') }}">
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+	<script type="text/javascript">
+
+		$(window).load(function() {
+			console.log( "document loaded" );
+    
+			$.get("{{ url_for('location') }}",
+				function(data, status) {
+				console.log("got response for location request");
+				if(data) {
+					var locations = data;
+					var location_id = document.getElementById("location_id");
+					$('#location_id').empty();
+					for(var i in locations) {
+						var opt = new Option(locations[i]);
+						$('#location_id').append(opt);
+					}
+				}   
+			});
+
+			$.get("{{ url_for('area') }}",
+				function(data, status) {
+				console.log("got response for area request");
+				if(data) {
+					var areatypes = data;
+					var areatype_id = document.getElementById("areatype_id");
+					$('#areatype_id').empty();
+					for(var i in areatypes) {
+						var opt = new Option(areatypes[i]);
+						$('#areatype_id').append(opt);
+					}
+				}
+			});
+		});
+	
+	function getbath() {
+    var bath = document.getElementsByName("bath_id");
+    for(var i in bath) {
+      if(bath[i].checked) {
+          return parseInt(i)+1;
+      }
+    }
+    return -1;
+  }
+  
+  function getbhk() {
+    var bhk = document.getElementsByName("bhk_id");
+    for(var i in bhk) {
+      if(bhk[i].checked) {
+          return parseInt(i)+1;
+      }
+    }
+    return -1; 
+  }
+
+  function getbalcony() {
+    var balc = document.getElementsByName("balcony_id");
+    for(var i in balc) {
+      if(balc[i].checked) {
+          return parseInt(i)+1;
+      }
+    }
+    return -1;
+  }
+  
+  function estimate() {
+    console.log("Estimate button clicked");
+    var total_sqft = document.getElementById("totalsqft_id");
+    var bhk = getbhk();
+    var bath = getbath();
+    var balcony = getbalcony();
+    var location = document.getElementById("location_id");
+    var area_type = document.getElementById("areatype_id");
+    var prediction = document.getElementById("prediction_id");
+    
+    $.post("{{url_for('predict') }}", {
+        total_sqft: parseFloat(total_sqft.value),
+        bhk: bhk,
+        bath: bath,
+        balcony:balcony,
+        location: location.value,
+        area_type: area_type.value
+    },function(data, status) {
+        console.log(data);
+        prediction.innerHTML = "<h2>" + data.toString() + " Lakh</h2>";
+        console.log(status);
+    });
+  }
+	</script>
 </head>
 <body>
 <div class="img"></div>
-<form action="{{ url_for('predict') }}" method="POST">
-	<input class="text_input" type="text" name="area_type" placeholder="Area type"><br>
-	<input class="text_input" type="text" name="location" placeholder="Location"><br>
-	<input class="text_input" type="text" name="bhk" placeholder="BHK"><br>
-	<input class="text_input" type="text" name="total_sqft" placeholder="Total sqft"><br>
-	<input class="text_input" type="text" name="bath" placeholder="Bath"><br>
-	<input class="text_input" type="text" name="balcony" placeholder="Balcony"><br>
-	<input type="submit" class="submit" value="Estimate">   
-	<h1>Estimated house price value = {{prediction}}</h1>
+<form class="form">
+	<h2>Choose Location</h2>
+	<select class="dropdown" name="" id="location_id">
+		<option value="" disabled="disabled" selected="selected">Choose a Location</option>
+	</select>
+
+    <h2>BHK</h2>
+	<div class="switch-field">
+		<input type="radio" id="radio-bhk-1" name="bhk_id" value="1"/>
+		<label for="radio-bhk-1">1</label>
+		<input type="radio" id="radio-bhk-2" name="bhk_id" value="2" checked/>
+		<label for="radio-bhk-2">2</label>
+		<input type="radio" id="radio-bhk-3" name="bhk_id" value="3"/>
+		<label for="radio-bhk-3">3</label>
+		<input type="radio" id="radio-bhk-4" name="bhk_id" value="4"/>
+		<label for="radio-bhk-4">4</label>
+		<input type="radio" id="radio-bhk-5" name="bhk_id" value="5"/>
+		<label for="radio-bhk-5">5</label>
+	</div>
+	<br>
+
+	<h2>Total Square Feet</h2>
+	<input class="text_input"  id="totalsqft_id" class="floatLabel" name="total_sqft" value="1000">
+
+	<h2>Choose area type</h2>
+	<select class="dropdown" name="" id="areatype_id">
+		<option value="" disabled="disabled" selected="selected">Choose an Area Type</option>
+	</select><br>
+
+    <h2>Bath</h2>
+	<div class="switch-field">
+		<input type="radio" id="radio-bath-1" name="bath_id" value="1"/>
+		<label for="radio-bath-1">1</label>
+		<input type="radio" id="radio-bath-2" name="bath_id" value="2" checked/>
+		<label for="radio-bath-2">2</label>
+		<input type="radio" id="radio-bath-3" name="bath_id" value="3"/>
+		<label for="radio-bath-3">3</label>
+		<input type="radio" id="radio-bath-4" name="bath_id" value="4"/>
+		<label for="radio-bath-4">4</label>
+		<input type="radio" id="radio-bath-5" name="bath_id" value="5"/>
+		<label for="radio-bath-5">5</label>
+	</div>
+	<br>
+
+    <h2>Balcony</h2>
+	<div class="switch-field">
+		<input type="radio" id="radio-balc-1" name="balcony_id" value="1"/>
+		<label for="radio-balc-1">1</label>
+		<input type="radio" id="radio-balc-2" name="balcony_id" value="2" checked/>
+		<label for="radio-balc-2">2</label>
+		<input type="radio" id="radio-balc-3" name="balcony_id" value="3"/>
+		<label for="radio-balc-3">3</label>
+		<input type="radio" id="radio-balc-4" name="balcony_id" value="4"/>
+		<label for="radio-balc-4">4</label>
+		<input type="radio" id="radio-balc-5" name="balcony_id" value="5"/>
+		<label for="radio-balc-5">5</label>
+	</div>
+	<br>
+
+	<button class="submit" onclick="estimate()" type="button">Estimate Price</button>  
+
+	<div id="prediction_id" class="result">	<h2></h2> </div>
 </form>	
 
 </body>
