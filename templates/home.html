@@ -86,7 +86,14 @@
 				area_type: area_type.value
 			},function(data, status) {
 				console.log(data);
-				prediction.innerHTML = "<h2>" + data.toString() + " Lakh</h2>";
+				if(data > 0)
+				{
+					prediction.innerHTML = "<h2>" + data.toString() + " Lakh</h2>";
+				}
+				else
+				{
+					prediction.innerHTML = "<h2>" + "Your input data is not practical" + "</h2";
+				}
 				console.log(status);
 			});
 		}
